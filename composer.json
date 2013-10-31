@@ -1,0 +1,25 @@
+{
+    "name": "rcrowe/raven",
+    "description": "Raven client for Sentry that supports background processing through multiple providers.",
+    "homepage": "https://github.com/rcrowe/Raven",
+    "keywords": ["sentry", "raven", "async", "background", "worker"],
+    "authors": [
+        {
+            "name": "Rob Crowe",
+            "email": "hello@vivalacrowe.com"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": ">=5.2.4",
+        "raven/raven": "0.7.*",
+        "guzzle/guzzle": "3.7.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "mockery/mockery": "*"
+    },
+    "autoload": {
+        "classmap": [ "src/" ]
+    }
+}

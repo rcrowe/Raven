@@ -1,0 +1,14 @@
+## MAC OS
+.DS_Store
+
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## Composer
+composer.lock
+vendor
