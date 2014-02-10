@@ -22,39 +22,9 @@ use Closure;
 class Log extends Writer
 {
     /**
-     * @var string Log level for Log::exception
-     *
-     * @see \Illuminate\Log\Writer::levels
-     * @see Log::exception()
-     */
-    protected $exceptionLevel = 'error';
-
-    /**
      * @var \rcrowe\Raven\Client
      */
     protected $sentry;
-
-    /**
-     * Get the log level for Log::exception() calls.
-     *
-     * @return string
-     */
-    public function getExceptionLevel()
-    {
-        return $this->exceptionLevel;
-    }
-
-    /**
-     * Set the log level used by Log::exception().
-     *
-     * @param string $level
-     *
-     * @return void
-     */
-    public function setExceptionLevel($level)
-    {
-        $this->exceptionLevel = $level;
-    }
 
     /**
      * Get Sentry client.
@@ -112,27 +82,41 @@ class Log extends Writer
     }
 
     /**
-     * Log an exception.
+     * Dynamically handle error additions.
      *
-     * Wrapper around normal log functions so you don't have to deal with context options.
-     *
-     * @param \Exception $exception
-     * @param array      $options
-     * @param level      $level     Override default exception log level.
-     *
-     * @throws \InvalidArgumentException Unknown log level.
-     *
+     * @param  string  $method
+     * @param  array   $parameters
      * @return mixed
+     *
+     * @throws \BadMethodCallException
      */
-    public function exception(Exception $exception, array $options = array(), $level = null)
+    public function __call($method, $parameters)
     {
-        $level   = (empty($level)) ? $this->exceptionLevel : $level;
-        $message = $exception->getMessage();
-        $context = array_merge($options, array(
-            'exception' => $exception,
-        ));
+        if (in_array($method, $this->levels))
+        {
+            // Handle exceptions using context
+            // Provides a nice wrapper around default logging methods
+            if (count($parameters) >= 1 && is_a($parameters[0], 'Exception')) {
+                // Create context if none is passed
+                if (!isset($parameters[1])) {
+                    $parameters[1] = array();
+                }
 
-        call_user_func_array(array($this, $level), array($message, $context));
+                // Set the exception context
+                $parameters[1]['exception'] = $parameters[0];
+
+                // Set message using exception
+                $parameters[0] = $parameters[0]->getMessage();
+            }
+
+            call_user_func_array(array($this, 'fireLogEvent'), array_merge(array($method), $parameters));
+
+            $method = 'add'.ucfirst($method);
+
+            return $this->callMonolog($method, $parameters);
+        }
+
+        throw new \BadMethodCallException("Method [$method] does not exist.");
     }
 
     /**

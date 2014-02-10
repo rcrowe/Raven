@@ -43,19 +43,4 @@ return array(
 
     'level' => 'error',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Exception Log Level
-    |--------------------------------------------------------------------------
-    |
-    | Log level to use whening using `Log::exception()`.
-    |
-    | You can override the level per call with the 3rd parameter. For example:
-    | Log::exception($ex, $context, $level)
-    |
-    */
-
-    'exceptionLevel' => 'error',
-
-
 );

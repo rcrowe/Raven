@@ -79,17 +79,6 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('rcrowe\Raven\Handler\Laravel', $client->getHandler());
     }
 
-    public function testSetExceptionLevel()
-    {
-        $app = $this->getApplication();
-
-        $provider = new RavenServiceProvider($app);
-        $provider->register();
-        $provider->boot();
-
-        $this->assertEquals('alert', $app['log']->getExceptionLevel());
-    }
-
     public function testDisabled()
     {
         $app = $this->getApplication();
@@ -140,13 +129,11 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $config->getLoader()->shouldReceive('exists')->with('dsn', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('enabled', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('level', 'raven')->andReturn(false);
-        $config->getLoader()->shouldReceive('exists')->with('exceptionLevel', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('load')->with('production', 'config', 'raven')->andReturn(
             array(
-                'dsn'            => 'http://123:456@foo.com/789',
-                'enabled'        => $enabled,
-                'level'          => 'critical',
-                'exceptionLevel' => 'alert',
+                'dsn'     => 'http://123:456@foo.com/789',
+                'enabled' => $enabled,
+                'level'   => 'critical',
             )
         );
         $app['config'] = $config;
