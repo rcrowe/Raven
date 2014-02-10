@@ -79,6 +79,7 @@ class Log extends Writer
         }
 
         $this->sentry->user_context(array());
+        return true;
     }
 
     /**
