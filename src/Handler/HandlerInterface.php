@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This file is part of rcrowe\Raven.
  *
  * This package makes use of the Sentry Raven client (https://github.com/getsentry/raven-php).
