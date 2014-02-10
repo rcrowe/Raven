@@ -92,8 +92,7 @@ class Log extends Writer
      */
     public function __call($method, $parameters)
     {
-        if (in_array($method, $this->levels))
-        {
+        if (in_array($method, $this->levels)) {
             // Handle exceptions using context
             // Provides a nice wrapper around default logging methods
             if (count($parameters) >= 1 && is_a($parameters[0], 'Exception')) {
