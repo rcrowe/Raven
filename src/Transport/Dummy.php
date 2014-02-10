@@ -15,18 +15,8 @@ namespace rcrowe\Raven\Transport;
  *
  * Usual for example so that nothing is transmitted in a dev environment.
  */
-class Dummy implements TransportInterface
+class Dummy extends BaseTransport
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return array(
-            'class' => '\rcrowe\Raven\Transport\Dummy',
-        );
-    }
-
     /**
      * {@inheritdoc}
      */

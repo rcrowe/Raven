@@ -12,8 +12,6 @@ namespace rcrowe\Raven\Handler;
 
 use rcrowe\Raven\Transport\TransportInterface;
 use rcrowe\Raven\Transport\Guzzle;
-use rcrowe\Raven\Client;
-use Raven_Compat;
 
 /**
  * Extended by certain handlers.
@@ -32,53 +30,22 @@ abstract class BaseHandler implements HandlerInterface
      */
     public function __construct(TransportInterface $transport = null)
     {
-        if (!empty($transport)) {
-            $this->setTransport($transport);
-        }
+        $this->transport = (empty($transport)) ? new Guzzle : $transport;
     }
 
     /**
-     * Get the transport.
-     *
-     * @return \rcrowe\Raven\Transport\TransportInterface
+     * {@inheritdoc}
      */
     public function getTransport()
     {
-        if (!empty($this->transport)) {
-            return $this->transport;
-        }
-
-        // No transport set, use Guzzle as default
-        return new Guzzle;
+        return $this->transport;
     }
 
     /**
-     * Set transport.
-     *
-     * @param \rcrowe\Raven\Transport\TransportInterface $transport
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setTransport(TransportInterface $transport)
     {
         $this->transport = $transport;
-    }
-
-    /**
-     * Encode the collected data.
-     *
-     * @param array $data
-     *
-     * @return string
-     */
-    public function encodeMessage(array $data)
-    {
-        $message = Raven_Compat::json_encode($data);
-
-        if (function_exists("gzcompress")) {
-            $message = base64_encode(gzcompress($message));
-        }
-
-        return $message;
     }
 }

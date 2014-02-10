@@ -16,7 +16,7 @@ use Guzzle\Http\Client as Http;
 /**
  * Transport message to Sentry over HTTP.
  */
-class Guzzle implements TransportInterface
+class Guzzle extends BaseTransport
 {
     /**
      * @var \Guzzle\Http\ClientInterface
@@ -24,46 +24,30 @@ class Guzzle implements TransportInterface
     protected $http;
 
     /**
-     * New instance.
+     * Get a new instance.
      *
-     * @param \Guzzle\Http\ClientInterface $http
+     * @param array                        $options
+     * @param \Guzzle\Http\ClientInterface $http    HTTP transport layer. If none falls back to Guzzle.
      */
-    public function __construct(HttpInterface $http = null)
+    public function __construct(array $options = array(), HttpInterface $http = null)
     {
-        if (!empty($http)) {
-            $this->setHttp($http);
-        }
+        parent::__construct($options);
+
+        $this->http = (empty($http)) ? new Http : $http;
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return array(
-            'class' => '\rcrowe\Raven\Transport\Guzzle',
-        );
-    }
-
-    /**
-     * Get http client.
+     * Get HTTP.
      *
-     * If none has been set we default to \Guzzle\Http\Client.
-     *
-     * @return \Guzzle\Http\Client
+     * @return \Guzzle\Http\ClientInterface
      */
     public function getHttp()
     {
-        if (!empty($this->http)) {
-            return $this->http;
-        }
-
-        // Provide default
-        return new Http;
+        return $this->http;
     }
 
     /**
-     * Set the HTTP client.
+     * Set HTTP.
      *
      * @param \Guzzle\Http\ClientInterface $http
      *
@@ -79,6 +63,6 @@ class Guzzle implements TransportInterface
      */
     public function send($url, $message, array $headers = array())
     {
-        $this->getHttp()->post($url, $headers, $message)->send();
+        $this->http->post($url, $headers, $message)->send();
     }
 }

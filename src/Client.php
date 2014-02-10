@@ -10,136 +10,124 @@
 
 namespace rcrowe\Raven;
 
-use rcrowe\Raven\Handler\HandlerInterface;
-use rcrowe\Raven\Handler\Sync;
 use Raven_Client;
 use Raven_Compat;
+use Closure;
+use rcrowe\Raven\Handler\HandlerInterface;
+use rcrowe\Raven\Handler\Sync;
+use RuntimeException;
 
-/**
- * Raven PHP client
- */
 class Client extends Raven_Client
 {
     /**
      * @var string Client semver.
      */
-    const VERSION = '0.1.0';
+    const VERSION = '0.2.0';
 
     /**
-     * @var array Background handlers that implement \rcrowe\Raven\Handler\HandlerInterface.
+     * @var \rcrowe\Raven\Handler\HandlerInterface Background handler.
      */
-    protected $handlers = array();
+    protected $handler;
 
     /**
-     * Build the auth header sent to Sentry.
-     *
-     * @param float  $timestamp  Micro timestamp.
-     * @param string $client     Client name/version header.
-     * @param string $api_key    Sentry API key.
-     * @param string $secret_key Sentry API secret.
-     *
-     * @return string
+     * @var \Closure Used to compress the JSON.
      */
-    public function getAuthHeader($timestamp, $client, $api_key, $secret_key)
+    protected $encoder;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($options_or_dsn = null, $options = array())
     {
-        return $this->get_auth_header($timestamp, $client, $api_key, $secret_key);
+        parent::__construct($options_or_dsn, $options);
+
+        $this->handler = new Sync;
+        $this->encoder = function (array $data) {
+            $message = Raven_Compat::json_encode($data);
+
+            if (function_exists('gzcompress')) {
+                $message = base64_encode(gzcompress($message));
+            }
+
+            return $message;
+        };
     }
 
     /**
-     * Add a background handler.
+     * Get background handler.
+     *
+     * @return \rcrowe\Raven\Handler\HandlerInterface
+     */
+    public function getHandler()
+    {
+        return $this->handler;
+    }
+
+    /**
+     * Set background handler.
      *
      * @param \rcrowe\Raven\Handler\HandlerInterface $handler
      *
      * @return void
      */
-    public function addHandler(HandlerInterface $handler)
+    public function setHandler(HandlerInterface $handler)
     {
-        if (!is_array($handler)) {
-            $handler = array($handler);
-        }
-
-        $this->handlers = array_merge($this->handlers, $handler);
+        $this->handler = $handler;
     }
 
     /**
-     * Get the registered handlers.
+     * Return closure used to compress data.
      *
-     * If no handlers are registered then it defaults to the
-     * sync handler (\rcrowe\Raven\Handler\Sync).
-     *
-     * @return array
+     * @return \Closure
      */
-    public function getHandlers()
+    public function getEncoder()
     {
-        if (!empty($this->handlers)) {
-            return $this->handlers;
-        }
-
-        // No handlers set, fallback to sync
-        return [
-            new Sync
-        ];
+        return $this->encoder;
     }
 
     /**
-     * Return the headers needed for the Sentry API.
+     * Set closure used to compress data.
      *
-     * @param \rcrowe\Raven\Client $client
+     * @param \Closure $callback
      *
-     * @return array
+     * @return void
      */
-    public static function getHeaders(Client $client)
+    public function setEncoder(Closure $callback)
     {
-        $client_string = 'rcrowe-raven/'.static::VERSION;
-        $timestamp     = microtime(true);
-
-        return array(
-            'User-Agent'    => $client_string,
-            'X-Sentry-Auth' => $client->getAuthHeader(
-                $timestamp,
-                $client_string,
-                $client->public_key,
-                $client->secret_key
-            ),
-            'Content-Type' => 'application/octet-stream',
-        );
-    }
-
-    /**
-     * Get the client options to be serialized.
-     *
-     * Currently Client::processors is unsupported.
-     *
-     * @param \rcrowe\Raven\Client $client
-     *
-     * @return array
-     */
-    public static function getClientOptions(Client $client)
-    {
-        return array(
-            'logger'          => $client->logger,
-            'servers'         => $client->servers,
-            'secret_key'      => $client->secret_key,
-            'public_key'      => $client->public_key,
-            'project'         => $client->project,
-            'auto_log_stacks' => $client->auto_log_stacks,
-            'name'            => $client->name,
-            'site'            => $client->site,
-            'tags'            => $client->tags,
-            'trace'           => $client->trace,
-            'timeout'         => $client->timeout,
-            'exclude'         => $client->exclude,
-            'shift_vars'      => $client->shift_vars,
-        );
+        $this->encoder = $callback;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws RuntimeException Thrown when no sentry servers have been set.
      */
     public function send($data)
     {
-        foreach ($this->getHandlers() as $handler) {
-            $handler->process($this, $data);
+        if (!$this->servers) {
+            throw new RuntimeException('No servers set');
         }
+
+        // Encode & compress data
+        $message = call_user_func($this->encoder, $data);
+
+        // Build up headers
+        $client_string = 'rcrowe-raven/'.static::VERSION;
+        $headers       = array(
+            'User-Agent'    => $client_string,
+            'X-Sentry-Auth' => $this->get_auth_header(
+                microtime(true),
+                $client_string,
+                $this->public_key,
+                $this->secret_key
+            ),
+            'Content-Type' => 'application/octet-stream',
+        );
+
+        foreach ($this->servers as $url) {
+            $this->handler->process($url, $message, $headers);
+        }
+
+        return true;
     }
 }

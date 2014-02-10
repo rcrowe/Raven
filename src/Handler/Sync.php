@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This file is part of rcrowe\Raven.
  *
  * This package makes use of the Sentry Raven client (https://github.com/getsentry/raven-php).
@@ -13,19 +13,18 @@ namespace rcrowe\Raven\Handler;
 use rcrowe\Raven\Client;
 
 /**
- * Sends the message to Sentry straight away.
+ * Default handler.
+ *
+ * Messages are sent straight away, no background magic. Works just
+ * like the default Raven client.
  */
 class Sync extends BaseHandler
 {
     /**
      * {@inheritdoc}
      */
-    public function process(Client $client, array $data)
+    public function process($url, $data, array $headers = array())
     {
-        $message = $this->encodeMessage($data);
-
-        foreach ($client->servers as $url) {
-            $this->getTransport()->send($url, $message, Client::getHeaders($client));
-        }
+        $this->transport->send($url, $data, $headers);
     }
 }

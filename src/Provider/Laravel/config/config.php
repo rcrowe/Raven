@@ -8,7 +8,7 @@
  * (c) Rob Crowe <hello@vivalacrowe.com>
  */
 
-return [
+return array(
 
     /*
     |--------------------------------------------------------------------------
@@ -19,6 +19,43 @@ return [
     |
     */
 
-    'dsn' => '',
+    'dsn' => 'https://15838b95e0ad4f66b8dcfab010c68fb6:2722ba5240f34ff491010a383bc81b7f@app.getsentry.com/9759',
 
-];
+    /*
+    |--------------------------------------------------------------------------
+    | Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Whether logging is enabled. Useful for controlling logging per environment.
+    |
+    */
+
+    'enabled' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Log Level
+    |--------------------------------------------------------------------------
+    |
+    | Log level (inclusive) at which to log to Sentry. Default `error`.
+    |
+    */
+
+    'level' => 'error',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exception Log Level
+    |--------------------------------------------------------------------------
+    |
+    | Log level to use whening using `Log::exception()`.
+    |
+    | You can override the level per call with the 3rd parameter. For example:
+    | Log::exception($ex, $context, $level)
+    |
+    */
+
+    'exceptionLevel' => 'error',
+
+
+);

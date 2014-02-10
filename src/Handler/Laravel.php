@@ -11,11 +11,11 @@
 namespace rcrowe\Raven\Handler;
 
 use rcrowe\Raven\Transport\TransportInterface;
-use rcrowe\Raven\Client;
 use Illuminate\Queue\QueueManager;
+use RuntimeException;
 
 /**
- * Make use of Laravels queue API.
+ * Uses the Laravel queue to store messages.
  */
 class Laravel extends BaseHandler
 {
@@ -30,13 +30,11 @@ class Laravel extends BaseHandler
      * @param \rcrowe\Raven\Transport\TransportInterface $transport
      * @param \Illuminate\Queue\QueueManager             $queue
      */
-    public function __construct(TransportInterface $transport = null, QueueManager $queue)
+    public function __construct(TransportInterface $transport = null, QueueManager $queue = null)
     {
         parent::__construct($transport);
 
-        if (!empty($queue)) {
-            $this->setQueue($queue);
-        }
+        $this->queue = $queue;
     }
 
     /**
@@ -63,13 +61,20 @@ class Laravel extends BaseHandler
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException Thrown if the queue has not been set.
      */
-    public function process(Client $client, array $message)
+    public function process($url, $data, array $headers = array())
     {
+        if (empty($this->queue)) {
+            throw new RuntimeException('Queue not set');
+        }
+
         $data = array(
-            'message'   => $this->encodeMessage($message),
-            'client'    => Client::getClientOptions($client),
-            'transport' => $this->getTransport()->toArray(),
+            'url'       => $url,
+            'data'      => $data,
+            'headers'   => $headers,
+            'transport' => $this->transport->toArray(),
         );
 
         $this->queue->push('rcrowe\Raven\Handler\Laravel\Job', $data);

@@ -39,10 +39,11 @@ interface HandlerInterface
     /**
      * Process a new Raven message.
      *
-     * @param \rcrowe\Raven\Client $client
-     * @param array                $data
+     * @param string $url     URL to send data to.
+     * @param mixed  $data    Data to you want to send to Sentry.
+     * @param array  $headers Headers to send with the request.
      *
      * @return void
      */
-    public function process(Client $client, array $data);
+    public function process($url, $data, array $headers = array());
 }

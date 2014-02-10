@@ -18,6 +18,20 @@ namespace rcrowe\Raven\Transport;
 interface TransportInterface
 {
     /**
+     * New transport instance.
+     *
+     * @param array $options
+     */
+    public function __construct(array $options = array());
+
+    /**
+     * Get transport options.
+     *
+     * @return array
+     */
+    public function getOptions();
+
+    /**
      * Encode the transport data for the background worker.
      *
      * Can be reused to create a new transport object with the same

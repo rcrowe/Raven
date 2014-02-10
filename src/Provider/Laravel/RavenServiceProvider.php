@@ -11,13 +11,16 @@
 namespace rcrowe\Raven\Provider\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use rcrowe\Raven\Transport\Guzzle as Transport;
+use rcrowe\Raven\Handler\Laravel as Handler;
 use rcrowe\Raven\Client;
-use rcrowe\Raven\Handler\Laravel;
+use Illuminate\Foundation\Application;
+use Monolog\Handler\RavenHandler;
 
 /**
- * Laravel service provider.
+ * Adds logging to Sentry (http://getsentry.com) to Laravel.
  *
- * Integrates with Laravel so you can call Log::error($exception) for example.
+ * Adds exception logging function `Log::exception()`.
  */
 class RavenServiceProvider extends ServiceProvider
 {
@@ -28,19 +31,25 @@ class RavenServiceProvider extends ServiceProvider
     {
         $app = $this->app;
 
-        // Register config
-        $this->app->config->package('rcrowe/raven', __DIR__.'/config');
+        $app->config->package('rcrowe/raven', __DIR__.'/config');
 
-        // Bind laravel handler
-        $this->app->bindIf('log.sentry.handler', function() use ($app) {
-            return new Laravel(null, $app['queue']);
+        $app->bindIf('log.sentry.transport', function () {
+            return new Transport;
         });
 
-        // Bind raven client
-        $this->app->bind('log.sentry', function() use ($app) {
+        $app->bindIf('log.sentry.handler', function () use ($app) {
+            return new Handler($app['log.sentry.transport'], $app['queue']);
+        });
 
-            $client = new Client($app->config->get('raven::dsn'));
-            $client->addHandler($app->make('log.sentry.handler'));
+        $app->singleton('log.sentry', function () use ($app) {
+            $client = new Client($app->config->get('raven::dsn'), array(
+                'logger' => 'rcrowe-raven/'.Client::VERSION,
+            ));
+            $client->tags_context(array(
+                'laravel_environment' => $app->environment(),
+                'laravel_version'     => Application::VERSION,
+            ));
+            $client->setHandler($app['log.sentry.handler']);
 
             return $client;
         });
@@ -51,14 +60,21 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $raven = $this->app->make('log.sentry');
+        $app = $this->app;
 
-        $this->app->log->listen(function($level, $message, $context) use ($raven) {
-            if (is_a($message, 'Exception')) {
-                $raven->captureException($message);
-            } else {
-                $raven->captureMessage($message);
+        $app['log'] = new Log($app['log']->getMonolog());
+        $app['log']->setExceptionLevel($app->config->get('raven::exceptionLevel', 'error'));
+
+        if (!$app->config->get('raven::enabled')) {
+            return;
+        }
+
+        $app['log']->setSentry($app['log.sentry']);
+        $app['log']->registerHandler(
+            $app->config->get('raven::level', 'error'),
+            function ($level) use ($app) {
+                return new RavenHandler($app['log.sentry'], $level);
             }
-        });
+        );
     }
 }
