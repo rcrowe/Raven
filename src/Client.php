@@ -106,7 +106,7 @@ class Client extends Raven_Client
     public function send($data)
     {
         if (!$this->servers) {
-            throw new RuntimeException('No servers set');
+            throw new RuntimeException('No Raven DSN set. Unable to log to Sentry.');
         }
 
         // Encode & compress data
