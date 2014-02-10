@@ -42,9 +42,7 @@ class RavenServiceProvider extends ServiceProvider
         });
 
         $app->singleton('log.sentry', function () use ($app) {
-            $client = new Client($app->config->get('raven::dsn'), array(
-                'logger' => 'rcrowe-raven/'.Client::VERSION,
-            ));
+            $client = new Client($app->config->get('raven::dsn'));
             $client->tags_context(array(
                 'laravel_environment' => $app->environment(),
                 'laravel_version'     => Application::VERSION,
