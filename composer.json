@@ -18,7 +18,8 @@
         "phpunit/phpunit": "~3.7.31",
         "squizlabs/php_codesniffer": "~1.5.2",
         "mockery/mockery": "~0.9.0",
-        "illuminate/queue": "~4.1.21"
+        "illuminate/foundation": "~4.0",
+        "illuminate/queue": "~4.0"
     },
     "autoload": {
         "psr-4": {
