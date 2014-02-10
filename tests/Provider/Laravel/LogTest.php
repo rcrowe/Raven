@@ -9,6 +9,17 @@ use rcrowe\Raven\Provider\Laravel\Log;
 use Monolog\Logger;
 use rcrowe\Raven\Client;
 use Monolog\Handler\RavenHandler;
+use Monolog\Handler\NullHandler;
+
+class LogCallTest extends Log
+{
+    protected function fireLogEvent($level, $message, array $context = array())
+    {
+        $this->level   = $level;
+        $this->message = $message;
+        $this->context = $context;
+    }
+}
 
 class LogTest extends PHPUnit_Framework_TestCase
 {
@@ -55,6 +66,60 @@ class LogTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($log->removeUser());
         $this->assertEquals($log->getSentry()->context->user, array());
+    }
+
+    /**
+     * @expectedException BadMethodCallException
+     */
+    public function testUnknownLogLevel()
+    {
+        $log = new Log(new Logger('test'));
+        $log->foo('test');
+    }
+
+    public function testMessageLog()
+    {
+        $log = new LogCallTest(new Logger('test'));
+        $log->registerHandler('error', function ($level) {
+            return new NullHandler($level);
+        });
+
+        $this->assertTrue($log->error('hello foo bar'));
+        $this->assertEquals('error', $log->level);
+        $this->assertEquals('hello foo bar', $log->message);
+        $this->assertEquals(array(), $log->context);
+    }
+
+    public function testExceptionLog()
+    {
+        $log = new LogCallTest(new Logger('test'));
+        $log->registerHandler('error', function ($level) {
+            return new NullHandler($level);
+        });
+
+        try {
+            throw new Exception('foo bar hello world');
+        } catch (Exception $ex) {
+            $this->assertTrue($log->error($ex));
+            $this->assertEquals('error', $log->level);
+            $this->assertEquals('foo bar hello world', $log->message);
+            $this->assertArrayHasKey('exception', $log->context);
+            $this->assertInstanceOf('Exception', $log->context['exception']);
+        }
+
+        try {
+            throw new Exception('foo bar hello world');
+        } catch (Exception $ex) {
+            $this->assertTrue($log->error($ex, array(
+                'foo' => 'bar'
+            )));
+            $this->assertEquals('error', $log->level);
+            $this->assertEquals('foo bar hello world', $log->message);
+            $this->assertArrayHasKey('exception', $log->context);
+            $this->assertInstanceOf('Exception', $log->context['exception']);
+            $this->assertArrayHasKey('foo', $log->context);
+            $this->assertEquals('bar', $log->context['foo']);
+        }
     }
 
     public function testRegisterHandler()
