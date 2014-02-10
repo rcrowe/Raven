@@ -41,7 +41,7 @@ class Client extends Raven_Client
     {
         parent::__construct($options_or_dsn, $options);
 
-        $this->logger  = 'rcrowe-raven/'.static::VERSION
+        $this->logger  = 'rcrowe-raven/'.static::VERSION;
         $this->handler = new Sync;
         $this->encoder = function (array $data) {
             $message = Raven_Compat::json_encode($data);
