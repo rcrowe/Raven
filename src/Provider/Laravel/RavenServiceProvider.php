@@ -55,9 +55,9 @@ class RavenServiceProvider extends ServiceProvider
 
         $this->app->log->listen(function($level, $message, $context) use ($raven) {
             if (is_a($message, 'Exception')) {
-                $raven->captureException($message);
+                $raven->captureException($message, ['level' => $level, 'extra' => $context]);
             } else {
-                $raven->captureMessage($message);
+                $raven->captureMessage($message, [], ['level' => $level, 'extra' => $context]);
             }
         });
     }
