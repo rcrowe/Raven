@@ -26,13 +26,13 @@ class GuzzleTest extends PHPUnit_Framework_TestCase
         $transport = new Guzzle;
         $http      = $transport->getHttp();
 
-        $this->assertInstanceOf('Guzzle\Http\ClientInterface', $http);
-        $this->assertInstanceOf('Guzzle\Http\Client', $http);
+        $this->assertInstanceOf('GuzzleHttp\ClientInterface', $http);
+        $this->assertInstanceOf('GuzzleHttp\Client', $http);
     }
 
     public function testSetHttp()
     {
-        $http = m::mock('Guzzle\Http\ClientInterface');
+        $http = m::mock('GuzzleHttp\ClientInterface');
         $http->shouldReceive('foo')->andReturn('bar');
 
         $transport = new Guzzle(array(), $http);
@@ -50,11 +50,11 @@ class GuzzleTest extends PHPUnit_Framework_TestCase
         $message = 'hello world';
         $headers = array('foo' => 'bar');
 
-        $entity = m::mock('Guzzle\Http\Message\EntityEnclosingRequestInterface');
-        $entity->shouldReceive('send')->once();
-
-        $http = m::mock('Guzzle\Http\ClientInterface');
-        $http->shouldReceive('post')->with($url, $headers, $message)->once()->andReturn($entity);
+        $http = m::mock('GuzzleHttp\ClientInterface');
+        $http->shouldReceive('post')->once()->with($url, array(
+            'headers' => $headers,
+            'body'    => $message,
+        ));
 
         $transport = new Guzzle(array(), $http);
         $transport->send($url, $message, $headers);

@@ -10,8 +10,8 @@
 
 namespace rcrowe\Raven\Transport;
 
-use Guzzle\Http\ClientInterface as HttpInterface;
-use Guzzle\Http\Client as Http;
+use GuzzleHttp\ClientInterface as HttpInterface;
+use GuzzleHttp\Client as Http;
 
 /**
  * Transport message to Sentry over HTTP.
@@ -63,6 +63,9 @@ class Guzzle extends BaseTransport
      */
     public function send($url, $message, array $headers = array())
     {
-        $this->http->post($url, $headers, $message)->send();
+        $this->http->post($url, array(
+            'headers' => $headers,
+            'body'    => $message,
+        ));
     }
 }
