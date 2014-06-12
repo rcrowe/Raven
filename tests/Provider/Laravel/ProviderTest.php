@@ -7,6 +7,7 @@ use Mockery as m;
 use Illuminate\Foundation\Application;
 use Illuminate\Config\Repository;
 use Illuminate\Queue\QueueManager;
+use Illuminate\Log\Writer;
 use rcrowe\Raven\Provider\Laravel\RavenServiceProvider;
 use rcrowe\Raven\Provider\Laravel\Log;
 use rcrowe\Raven\Client;
@@ -81,44 +82,33 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 
     public function testDisabled()
     {
-        $app = $this->getApplication();
+        $app        = $this->getApplication();
+        $app['log'] = new Writer(new Logger('test'));
 
         $provider = new RavenServiceProvider($app);
         $provider->register();
         $provider->boot();
 
-        $handlers = $app['log']->getMonolog()->getHandlers();
-        $found    = false;
+        $this->assertInstanceOf('Illuminate\Log\Writer', $app['log']);
 
-        foreach ($handlers as $handler) {
-            if (is_a($handler, 'Monolog\Handler\RavenHandler')) {
-                $found = true;
-                break;
-            }
+        try {
+            $app['log']->getMonolog()->popHandler();
+            $this->assertFalse(true);
+        } catch (\LogicException $ex) {
+            $this->assertTrue(true);
         }
-
-        $this->assertFalse($found);
     }
 
-    public function testSetSentry()
+    public function testLogPatched()
     {
-        $app = $this->getApplication(true);
+        $app        = $this->getApplication(true);
+        $app['log'] = new Writer(new Logger('test'));
 
         $provider = new RavenServiceProvider($app);
         $provider->register();
         $provider->boot();
 
-        $handlers = $app['log']->getMonolog()->getHandlers();
-        $found    = false;
-
-        foreach ($handlers as $handler) {
-            if (is_a($handler, 'Monolog\Handler\RavenHandler')) {
-                $found = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($found);
+        $this->assertInstanceOf('rcrowe\Raven\Provider\Laravel\Log', $app['log']);
     }
 
     public function testRavenHandlerRegistered()
