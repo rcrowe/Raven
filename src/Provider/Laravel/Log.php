@@ -22,67 +22,6 @@ use Closure;
 class Log extends Writer
 {
     /**
-     * @var \rcrowe\Raven\Client
-     */
-    protected $sentry;
-
-    /**
-     * Get Sentry client.
-     *
-     * @return \rcrowe\Raven\Client
-     */
-    public function getSentry()
-    {
-        return $this->sentry;
-    }
-
-    /**
-     * Set the sentry client.
-     *
-     * @param \rcrowe\Raven\Client $sentry
-     *
-     * @return void
-     */
-    public function setSentry(Sentry $sentry)
-    {
-        $this->sentry = $sentry;
-    }
-
-    /**
-     * Include user details with logging.
-     *
-     * @param array $user User details.
-     *
-     * @return bool Whether user set successfully.
-     */
-    public function setUser(array $user)
-    {
-        if (empty($this->sentry)) {
-            // Sentry logging not enabled
-            return false;
-        }
-
-        $this->sentry->user_context($user);
-        return true;
-    }
-
-    /**
-     * Remove user details from log data.
-     *
-     * @return bool Whether user data successfully removed.
-     */
-    public function removeUser()
-    {
-        if (empty($this->sentry)) {
-            // Sentry logging not enabled
-            return false;
-        }
-
-        $this->sentry->user_context(array());
-        return true;
-    }
-
-    /**
      * Dynamically handle error additions.
      *
      * @param  string  $method

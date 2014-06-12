@@ -40,8 +40,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $provider = new RavenServiceProvider($app);
         $provider->register();
 
-        $this->assertTrue($app->bound('log.sentry.transport'));
-        $this->assertInstanceOf('rcrowe\Raven\Transport\Guzzle', $app->make('log.sentry.transport'));
+        $this->assertTrue($app->bound('log.raven.transport'));
+        $this->assertInstanceOf('rcrowe\Raven\Transport\Guzzle', $app->make('log.raven.transport'));
     }
 
     public function testHandlerBound()
@@ -51,8 +51,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $provider = new RavenServiceProvider($app);
         $provider->register();
 
-        $this->assertTrue($app->bound('log.sentry.handler'));
-        $this->assertInstanceOf('rcrowe\Raven\Handler\Laravel', $app->make('log.sentry.handler'));
+        $this->assertTrue($app->bound('log.raven.handler'));
+        $this->assertInstanceOf('rcrowe\Raven\Handler\Laravel', $app->make('log.raven.handler'));
     }
 
     public function testClientBound()
@@ -62,9 +62,9 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $provider = new RavenServiceProvider($app);
         $provider->register();
 
-        $client = $app->make('log.sentry');
+        $client = $app->make('log.raven');
 
-        $this->assertTrue($app->bound('log.sentry'));
+        $this->assertTrue($app->bound('log.raven'));
         $this->assertInstanceOf('rcrowe\Raven\Client', $client);
 
         $this->assertEquals('rcrowe-raven/'.Client::VERSION, $client->logger);
@@ -87,7 +87,17 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $provider->register();
         $provider->boot();
 
-        $this->assertTrue($app['log']->getSentry() === null);
+        $handlers = $app['log']->getMonolog()->getHandlers();
+        $found    = false;
+
+        foreach ($handlers as $handler) {
+            if (is_a($handler, 'Monolog\Handler\RavenHandler')) {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertFalse($found);
     }
 
     public function testSetSentry()
@@ -98,7 +108,17 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $provider->register();
         $provider->boot();
 
-        $this->assertInstanceOf('rcrowe\Raven\Client', $app['log']->getSentry());
+        $handlers = $app['log']->getMonolog()->getHandlers();
+        $found    = false;
+
+        foreach ($handlers as $handler) {
+            if (is_a($handler, 'Monolog\Handler\RavenHandler')) {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found);
     }
 
     public function testRavenHandlerRegistered()

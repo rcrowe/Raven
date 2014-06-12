@@ -33,21 +33,21 @@ class RavenServiceProvider extends ServiceProvider
 
         $app->config->package('rcrowe/raven', __DIR__.'/config');
 
-        $app->bindIf('log.sentry.transport', function () {
+        $app->bindIf('log.raven.transport', function () {
             return new Transport;
         });
 
-        $app->bindIf('log.sentry.handler', function () use ($app) {
-            return new Handler($app['log.sentry.transport'], $app['queue']);
+        $app->bindIf('log.raven.handler', function () use ($app) {
+            return new Handler($app['log.raven.transport'], $app['queue']);
         });
 
-        $app->singleton('log.sentry', function () use ($app) {
+        $app->singleton('log.raven', function () use ($app) {
             $client = new Client($app->config->get('raven::dsn'));
             $client->tags_context(array(
                 'laravel_environment' => $app->environment(),
                 'laravel_version'     => Application::VERSION,
             ));
-            $client->setHandler($app['log.sentry.handler']);
+            $client->setHandler($app['log.raven.handler']);
 
             return $client;
         });
@@ -65,11 +65,10 @@ class RavenServiceProvider extends ServiceProvider
             return;
         }
 
-        $app['log']->setSentry($app['log.sentry']);
         $app['log']->registerHandler(
             $app->config->get('raven::level', 'error'),
             function ($level) use ($app) {
-                return new RavenHandler($app['log.sentry'], $level);
+                return new RavenHandler($app['log.raven'], $level);
             }
         );
     }
