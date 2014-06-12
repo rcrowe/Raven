@@ -10,16 +10,7 @@ use Monolog\Logger;
 use rcrowe\Raven\Client;
 use Monolog\Handler\RavenHandler;
 use Monolog\Handler\NullHandler;
-
-class LogCallTest extends Log
-{
-    protected function fireLogEvent($level, $message, array $context = array())
-    {
-        $this->level   = $level;
-        $this->message = $message;
-        $this->context = $context;
-    }
-}
+use rcrowe\Raven\Tests\Fixture\LogCall;
 
 class LogTest extends PHPUnit_Framework_TestCase
 {
@@ -79,7 +70,7 @@ class LogTest extends PHPUnit_Framework_TestCase
 
     public function testMessageLog()
     {
-        $log = new LogCallTest(new Logger('test'));
+        $log = new LogCall(new Logger('test'));
         $log->registerHandler('error', function ($level) {
             return new NullHandler($level);
         });
@@ -92,7 +83,7 @@ class LogTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionLog()
     {
-        $log = new LogCallTest(new Logger('test'));
+        $log = new LogCall(new Logger('test'));
         $log->registerHandler('error', function ($level) {
             return new NullHandler($level);
         });
@@ -133,7 +124,7 @@ class LogTest extends PHPUnit_Framework_TestCase
             $this->assertTrue(true);
         }
 
-        $log->registerHandler('error', function($level) {
+        $log->registerHandler('error', function ($level) {
             return new RavenHandler(new Client('http://123:456@foo.com/789'), $level);
         });
 

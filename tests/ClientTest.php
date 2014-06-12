@@ -65,7 +65,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     public function testSetEncoder()
     {
         $client = new Client;
-        $client->setEncoder(function() {
+        $client->setEncoder(function () {
             return 'FooBar';
         });
 
@@ -111,7 +111,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $handler->shouldReceive('process')->once()->with(
             'https://app.getsentry.com/api/store/',
             $message,
-            m::on(function($param) {
+            m::on(function ($param) {
                 if (!array_key_exists('User-Agent', $param)) {
                     return false;
                 }

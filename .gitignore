@@ -12,3 +12,4 @@
 ## Composer
 composer.lock
 vendor
+build/

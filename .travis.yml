@@ -17,7 +17,7 @@ before_script:
 
 script:
   - ./vendor/bin/phpunit --configuration phpunit.xml
-  - ./vendor/bin/phpcs --standard=PSR2 src/
+  - ./vendor/bin/phpcs --standard=PSR2 src/ tests/
 
 after_script:
   - ./vendor/bin/coveralls -v

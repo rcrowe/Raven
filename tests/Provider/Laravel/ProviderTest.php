@@ -124,7 +124,10 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $config = new Repository(m::mock('Illuminate\Config\LoaderInterface'), 'production');
 
         $config->getLoader()->shouldReceive('addNamespace');
-        $config->getLoader()->shouldReceive('cascadePackage')->andReturnUsing(function($env, $package, $group, $items) { return $items; });
+        $config->getLoader()->shouldReceive('cascadePackage')
+            ->andReturnUsing(function ($env, $package, $group, $items) {
+                return $items;
+            });
         $config->getLoader()->shouldReceive('exists')->with('environments', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('dsn', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('enabled', 'raven')->andReturn(false);

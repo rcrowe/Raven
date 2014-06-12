@@ -3,15 +3,7 @@
 namespace rcrowe\Raven\Tests\Transport;
 
 use PHPUnit_Framework_TestCase;
-use rcrowe\Raven\Transport\BaseTransport;
-
-class TempTransport extends BaseTransport
-{
-    public function send($url, $message, array $headers = array())
-    {
-        return true;
-    }
-}
+use rcrowe\Raven\Tests\Fixture\TempTransport;
 
 class BaseTransportTest extends PHPUnit_Framework_TestCase
 {
@@ -19,7 +11,7 @@ class BaseTransportTest extends PHPUnit_Framework_TestCase
     {
         $transport = new TempTransport;
 
-        $this->assertCount(0 , $transport->getOptions());
+        $this->assertCount(0, $transport->getOptions());
     }
 
     public function testSetOptions()
@@ -49,7 +41,7 @@ class BaseTransportTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('class', $data);
         $this->assertArrayHasKey('options', $data);
 
-        $this->assertEquals($data['class'], 'rcrowe\Raven\Tests\Transport\TempTransport');
+        $this->assertEquals($data['class'], 'rcrowe\Raven\Tests\Fixture\TempTransport');
 
         $this->assertArrayHasKey('foo', $data['options']);
         $this->assertEquals('bar', $data['options']['foo']);

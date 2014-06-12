@@ -5,14 +5,7 @@ namespace rcrowe\Raven\Tests\Handler;
 use PHPUnit_Framework_TestCase;
 use rcrowe\Raven\Handler\BaseHandler;
 use rcrowe\Raven\Transport\Dummy;
-
-class TempHandler extends BaseHandler
-{
-    public function process($url, $data, array $headers = array())
-    {
-        return true;
-    }
-}
+use rcrowe\Raven\Tests\Fixture\TempHandler;
 
 class BaseHandlerTest extends PHPUnit_Framework_TestCase
 {
