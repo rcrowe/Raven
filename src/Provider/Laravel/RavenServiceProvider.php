@@ -30,7 +30,7 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->config->package('rcrowe/raven', __DIR__.'/config');
+        $this->app->config->package('rcrowe/raven', null);
 
         $this->app->bindIf('log.raven.transport', function () {
             return new Transport;
