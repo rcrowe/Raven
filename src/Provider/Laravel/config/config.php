@@ -60,8 +60,12 @@ return array(
         |--------------------------------------------------------------------------
         |
         | Set extra data on every log made to Sentry. Supports both closures & strings.
+        | Monolog has a number of built-in processors which you can find here:
         |
-        | See here for more details: https://github.com/Seldaek/monolog/blob/master/doc/usage.md#using-processors
+        | https://github.com/Seldaek/monolog/blob/master/README.mdown#processors
+        |
+        | For more details check out the Monolog docs:
+        | https://github.com/Seldaek/monolog/blob/master/doc/usage.md#using-processors
         |
         | For example:
         |
