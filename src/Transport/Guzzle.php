@@ -29,7 +29,7 @@ class Guzzle extends BaseTransport
      * @param array                        $options
      * @param \Guzzle\Http\ClientInterface $http    HTTP transport layer. If none falls back to Guzzle.
      */
-    public function __construct(array $options = array(), HttpInterface $http = null)
+    public function __construct(array $options = [], HttpInterface $http = null)
     {
         parent::__construct($options);
 
@@ -63,11 +63,11 @@ class Guzzle extends BaseTransport
      *
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public function send($url, $message, array $headers = array())
+    public function send($url, $message, array $headers = [])
     {
-        $this->http->post($url, array(
+        $this->http->post($url, [
             'headers' => $headers,
             'body'    => $message,
-        ));
+        ]);
     }
 }

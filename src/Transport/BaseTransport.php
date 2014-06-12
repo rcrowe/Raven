@@ -18,12 +18,12 @@ abstract class BaseTransport implements TransportInterface
     /**
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }

@@ -30,29 +30,30 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $app = $this->app;
+        $this->app->config->package('rcrowe/raven', __DIR__.'/config');
 
-        $app->config->package('rcrowe/raven', __DIR__.'/config');
-
-        $app->bindIf('log.raven.transport', function () {
+        $this->app->bindIf('log.raven.transport', function () {
             return new Transport;
         });
 
-        $app->bindIf('log.raven.handler', function () use ($app) {
-            return new Handler($app['log.raven.transport'], $app['queue']);
+        $this->app->bindIf('log.raven.handler', function () {
+            return new Handler(
+                $this->app['log.raven.transport'],
+                $this->app->queue
+            );
         });
 
-        $app->bindIf('log.raven.processors', function () use ($app) {
-            return $app->config->get('raven::monolog.processors', array());
+        $this->app->bindIf('log.raven.processors', function () {
+            return $this->app->config->get('raven::monolog.processors', []);
         });
 
-        $app->singleton('log.raven', function () use ($app) {
-            $client = new Client($app->config->get('raven::dsn'));
-            $client->tags_context(array(
-                'laravel_environment' => $app->environment(),
+        $this->app->singleton('log.raven', function () {
+            $client = new Client($this->app->config->get('raven::dsn'));
+            $client->tags_context([
+                'laravel_environment' => $this->app->environment(),
                 'laravel_version'     => Application::VERSION,
-            ));
-            $client->setHandler($app['log.raven.handler']);
+            ]);
+            $client->setHandler($this->app['log.raven.handler']);
 
             return $client;
         });
@@ -63,21 +64,19 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $app = $this->app;
-
-        if (!$app->config->get('raven::enabled')) {
+        if (!$this->app->config->get('raven::enabled')) {
             return;
         }
 
-        $app['log'] = new Log($app['log']->getMonolog());
+        $this->app->log = new Log($this->app->log->getMonolog());
 
-        $app['log']->registerHandler(
-            $app->config->get('raven::level', 'error'),
-            function ($level) use ($app) {
-                $handler = new RavenHandler($app['log.raven'], $level);
+        $this->app->log->registerHandler(
+            $this->app->config->get('raven::level', 'error'),
+            function ($level) {
+                $handler = new RavenHandler($this->app['log.raven'], $level);
 
                 // Add processors
-                $processors = $app['log.raven.processors'];
+                $processors = $this->app['log.raven.processors'];
 
                 if (is_array($processors)) {
                     foreach ($processors as $process) {

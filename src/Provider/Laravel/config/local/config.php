@@ -8,7 +8,7 @@
  * (c) Rob Crowe <hello@vivalacrowe.com>
  */
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -21,4 +21,4 @@ return array(
 
     'enabled' => false,
 
-);
+];

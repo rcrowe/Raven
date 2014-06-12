@@ -23,7 +23,7 @@ class Sync extends BaseHandler
     /**
      * {@inheritdoc}
      */
-    public function process($url, $data, array $headers = array())
+    public function process($url, $data, array $headers = [])
     {
         $this->transport->send($url, $data, $headers);
     }

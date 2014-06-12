@@ -8,7 +8,7 @@
  * (c) Rob Crowe <hello@vivalacrowe.com>
  */
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ return array(
     |
     */
 
-    'monolog' => array(
+    'monolog' => [
 
         /*
         |--------------------------------------------------------------------------
@@ -79,10 +79,10 @@ return array(
         |
         */
 
-        'processors' => array(
+        'processors' => [
             // 'Monolog\Processor\GitProcessor'
-        ),
+        ],
 
-    ),
+    ],
 
-);
+];

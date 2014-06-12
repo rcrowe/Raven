@@ -64,18 +64,18 @@ class Laravel extends BaseHandler
      *
      * @throws \RuntimeException Thrown if the queue has not been set.
      */
-    public function process($url, $data, array $headers = array())
+    public function process($url, $data, array $headers = [])
     {
         if (empty($this->queue)) {
             throw new RuntimeException('Queue not set');
         }
 
-        $data = array(
+        $data = [
             'url'       => $url,
             'data'      => $data,
             'headers'   => $headers,
             'transport' => $this->transport->toArray(),
-        );
+        ];
 
         $this->queue->push('rcrowe\Raven\Handler\Laravel\Job', $data);
     }

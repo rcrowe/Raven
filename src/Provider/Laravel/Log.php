@@ -38,7 +38,7 @@ class Log extends Writer
             if (count($parameters) >= 1 && is_a($parameters[0], 'Exception')) {
                 // Create context if none is passed
                 if (!isset($parameters[1])) {
-                    $parameters[1] = array();
+                    $parameters[1] = [];
                 }
 
                 // Set the exception context
@@ -48,7 +48,7 @@ class Log extends Writer
                 $parameters[0] = $parameters[0]->getMessage();
             }
 
-            call_user_func_array(array($this, 'fireLogEvent'), array_merge(array($method), $parameters));
+            call_user_func_array([$this, 'fireLogEvent'], array_merge([$method], $parameters));
 
             $method = 'add'.ucfirst($method);
 

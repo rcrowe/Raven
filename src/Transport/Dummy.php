@@ -20,7 +20,7 @@ class Dummy extends BaseTransport
     /**
      * {@inheritdoc}
      */
-    public function send($url, $message, array $headers = array())
+    public function send($url, $message, array $headers = [])
     {
         return true;
     }

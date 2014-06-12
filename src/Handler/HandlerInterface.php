@@ -45,5 +45,5 @@ interface HandlerInterface
      *
      * @return void
      */
-    public function process($url, $data, array $headers = array());
+    public function process($url, $data, array $headers = []);
 }

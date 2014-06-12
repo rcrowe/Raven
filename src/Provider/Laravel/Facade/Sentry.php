@@ -46,6 +46,6 @@ class Sentry extends Facade
      */
     public static function removeUser()
     {
-        static::$app['log.raven']->user_context(array());
+        static::$app['log.raven']->user_context([]);
     }
 }

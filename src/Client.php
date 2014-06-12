@@ -37,7 +37,7 @@ class Client extends Raven_Client
     /**
      * {@inheritdoc}
      */
-    public function __construct($options_or_dsn = null, $options = array())
+    public function __construct($options_or_dsn = null, $options = [])
     {
         parent::__construct($options_or_dsn, $options);
 
@@ -114,7 +114,7 @@ class Client extends Raven_Client
 
         // Build up headers
         $client_string = 'rcrowe-raven/'.static::VERSION;
-        $headers       = array(
+        $headers       = [
             'User-Agent'    => $client_string,
             'X-Sentry-Auth' => $this->get_auth_header(
                 microtime(true),
@@ -123,7 +123,7 @@ class Client extends Raven_Client
                 $this->secret_key
             ),
             'Content-Type' => 'application/octet-stream',
-        );
+        ];
 
         foreach ($this->servers as $url) {
             $this->handler->process($url, $message, $headers);

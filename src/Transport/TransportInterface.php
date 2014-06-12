@@ -22,7 +22,7 @@ interface TransportInterface
      *
      * @param array $options
      */
-    public function __construct(array $options = array());
+    public function __construct(array $options = []);
 
     /**
      * Get transport options.
@@ -52,5 +52,5 @@ interface TransportInterface
      *
      * @return void
      */
-    public function send($url, $message, array $headers = array());
+    public function send($url, $message, array $headers = []);
 }
