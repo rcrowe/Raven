@@ -127,7 +127,8 @@ class ProviderTest extends Base
         $provider->register();
         $provider->boot();
 
-        $this->assertInstanceOf('Monolog\Processor\GitProcessor', $app['log']->getMonolog()->popHandler()->popProcessor());
+        $processor = $app['log']->getMonolog()->popHandler()->popProcessor();
+        $this->assertInstanceOf('Monolog\Processor\GitProcessor', $processor);
     }
 
     public function testClosureProcessorRegistered()
