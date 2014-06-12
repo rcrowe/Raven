@@ -43,4 +43,42 @@ return array(
 
     'level' => 'error',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Monolog
+    |--------------------------------------------------------------------------
+    |
+    | Customise the Monolog Raven handler.
+    |
+    */
+
+    'monolog' => array(
+
+        /*
+        |--------------------------------------------------------------------------
+        | Processors
+        |--------------------------------------------------------------------------
+        |
+        | Set extra data on every log made to Sentry. Supports both closures & strings.
+        |
+        | See here for more details: https://github.com/Seldaek/monolog/blob/master/doc/usage.md#using-processors
+        |
+        | For example:
+        |
+        | 'processors' => [
+        |     'Monolog\Processor\GitProcessor',
+        |     function ($record) {
+        |         $record['extra']['dummy'] = 'Hello world';
+        |         return $record;
+        |     }
+        | ]
+        |
+        */
+
+        'processors' => array(
+            // 'Monolog\Processor\GitProcessor'
+        ),
+
+    ),
+
 );

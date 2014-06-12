@@ -16,6 +16,7 @@ use rcrowe\Raven\Handler\Laravel as Handler;
 use rcrowe\Raven\Client;
 use Illuminate\Foundation\Application;
 use Monolog\Handler\RavenHandler;
+use InvalidArgumentException;
 
 /**
  * Adds logging to Sentry (http://getsentry.com) to Laravel.
@@ -39,6 +40,10 @@ class RavenServiceProvider extends ServiceProvider
 
         $app->bindIf('log.raven.handler', function () use ($app) {
             return new Handler($app['log.raven.transport'], $app['queue']);
+        });
+
+        $app->bindIf('log.raven.processors', function () use ($app) {
+            return $app->config->get('raven::monolog.processors', array());
         });
 
         $app->singleton('log.raven', function () use ($app) {
@@ -69,7 +74,28 @@ class RavenServiceProvider extends ServiceProvider
         $app['log']->registerHandler(
             $app->config->get('raven::level', 'error'),
             function ($level) use ($app) {
-                return new RavenHandler($app['log.raven'], $level);
+                $handler = new RavenHandler($app['log.raven'], $level);
+
+                // Add processors
+                $processors = $app['log.raven.processors'];
+
+                if (is_array($processors)) {
+                    foreach ($processors as $process) {
+                        // Get callable
+                        if (is_string($process)) {
+                            $callable = new $process;
+                        } elseif (is_callable($process)) {
+                            $callable = $process;
+                        } else {
+                            throw new InvalidArgumentException('Raven: Invalid processor');
+                        }
+
+                        // Add processor to Raven handler
+                        $handler->pushProcessor($callable);
+                    }
+                }
+
+                return $handler;
             }
         );
     }

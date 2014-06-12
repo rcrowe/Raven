@@ -13,9 +13,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('dsn', $config);
         $this->assertArrayHasKey('enabled', $config);
         $this->assertArrayHasKey('level', $config);
+        $this->assertArrayHasKey('monolog', $config);
+        $this->assertArrayHasKey('processors', $config['monolog']);
 
         $this->assertTrue(is_string($config['dsn']));
         $this->assertTrue(is_bool($config['enabled']));
         $this->assertTrue(is_string($config['level']));
+        $this->assertTrue(is_array($config['monolog']));
+        $this->assertTrue(is_array($config['monolog']['processors']));
     }
 }
