@@ -27,12 +27,12 @@
         </blacklist> -->
     </filter>
     <logging>
-        <log type="coverage-html"
+<!--         <log type="coverage-html"
              target="build/coverage"
              title="Raven"
              charset="UTF-8"
              yui="true"
-             highlight="true" />
+             highlight="true" /> -->
 
         <log type="coverage-text"
              target="php://stdout"
