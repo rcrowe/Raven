@@ -157,4 +157,17 @@ class ProviderTest extends Base
         $provider->register();
         $provider->boot();
     }
+
+    public function testProvides()
+    {
+        $app = $this->getApplication(true);
+
+        $provider = new RavenServiceProvider($app);
+        $provider->register();
+        $provider->boot();
+
+        foreach ($provider->provides() as $key) {
+            $this->assertArrayHasKey($key, $app);
+        }
+    }
 }

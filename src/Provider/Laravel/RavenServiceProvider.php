@@ -98,4 +98,19 @@ class RavenServiceProvider extends ServiceProvider
             }
         );
     }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'log.raven',
+            'log.raven.handler',
+            'log.raven.processors',
+            'log.raven.transport',
+        ];
+    }
 }
