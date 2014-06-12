@@ -36,14 +36,14 @@ class Base extends PHPUnit_Framework_TestCase
         $config->getLoader()->shouldReceive('exists')->with('level', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('monolog', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('load')->with('production', 'config', 'raven')->andReturn(
-            array(
+            [
                 'dsn'     => 'http://123:456@foo.com/789',
                 'enabled' => $enabled,
                 'level'   => 'critical',
-                'monolog' => array(
-                    'processors' => array(),
-                ),
-            )
+                'monolog' => [
+                    'processors' => [],
+                ],
+            ]
         );
         $app['config'] = $config;
 

@@ -25,12 +25,11 @@ class SyncTest extends PHPUnit_Framework_TestCase
     {
         $url     = 'http://foo.com';
         $data    = 'bar';
-        $headers = array('foo' => 'bar');
+        $headers = ['foo' => 'bar'];
 
         $transport = m::mock('rcrowe\Raven\Transport\TransportInterface');
         $transport->shouldReceive('send')->with($url, $data, $headers)->once();
 
-        $handler = new Sync($transport);
-        $handler->process($url, $data, $headers);
+        (new Sync($transport))->process($url, $data, $headers);
     }
 }

@@ -11,16 +11,12 @@ class BaseHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function testInstance()
     {
-        $handler = new TempHandler;
-
-        $this->assertInstanceOf('rcrowe\Raven\Handler\HandlerInterface', $handler);
+        $this->assertInstanceOf('rcrowe\Raven\Handler\HandlerInterface', new TempHandler);
     }
 
     public function testDefaultTransport()
     {
-        $handler = new TempHandler;
-
-        $this->assertInstanceOf('rcrowe\Raven\Transport\Guzzle', $handler->getTransport());
+        $this->assertInstanceOf('rcrowe\Raven\Transport\Guzzle', (new TempHandler)->getTransport());
     }
 
     public function testNewInstanceTransport()

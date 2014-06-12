@@ -38,7 +38,7 @@ class LogTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($log->error('hello foo bar'));
         $this->assertEquals('error', $log->level);
         $this->assertEquals('hello foo bar', $log->message);
-        $this->assertEquals(array(), $log->context);
+        $this->assertEquals([], $log->context);
     }
 
     public function testExceptionLog()
@@ -61,9 +61,9 @@ class LogTest extends PHPUnit_Framework_TestCase
         try {
             throw new Exception('foo bar hello world');
         } catch (Exception $ex) {
-            $this->assertTrue($log->error($ex, array(
+            $this->assertTrue($log->error($ex, [
                 'foo' => 'bar'
-            )));
+            ]));
             $this->assertEquals('error', $log->level);
             $this->assertEquals('foo bar hello world', $log->message);
             $this->assertArrayHasKey('exception', $log->context);

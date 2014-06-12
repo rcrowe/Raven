@@ -49,18 +49,18 @@ class JobTest extends PHPUnit_Framework_TestCase
 
     protected function getData()
     {
-        return array(
+        return [
             'url'     => 'http://foo.com',
             'data'    => 'hello world',
-            'headers' => array(
+            'headers' => [
                 'foo' => 'bar',
-            ),
-            'transport' => array(
+            ],
+            'transport' => [
                 'class'   => 'rcrowe\Raven\Transport\Dummy',
-                'options' => array(
+                'options' => [
                     'throw' => 'poop',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

@@ -6,7 +6,7 @@ use rcrowe\Raven\Provider\Laravel\Log;
 
 class LogCall extends Log
 {
-    protected function fireLogEvent($level, $message, array $context = array())
+    protected function fireLogEvent($level, $message, array $context = [])
     {
         $this->level   = $level;
         $this->message = $message;

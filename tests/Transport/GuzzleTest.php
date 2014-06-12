@@ -35,7 +35,7 @@ class GuzzleTest extends PHPUnit_Framework_TestCase
         $http = m::mock('GuzzleHttp\ClientInterface');
         $http->shouldReceive('foo')->andReturn('bar');
 
-        $transport = new Guzzle(array(), $http);
+        $transport = new Guzzle([], $http);
         $this->assertEquals($transport->getHttp()->foo(), 'bar');
 
         $http->shouldReceive('throw')->andReturn('poop');
@@ -48,15 +48,15 @@ class GuzzleTest extends PHPUnit_Framework_TestCase
     {
         $url     = 'http://foo.com';
         $message = 'hello world';
-        $headers = array('foo' => 'bar');
+        $headers = ['foo' => 'bar'];
 
         $http = m::mock('GuzzleHttp\ClientInterface');
-        $http->shouldReceive('post')->once()->with($url, array(
+        $http->shouldReceive('post')->once()->with($url, [
             'headers' => $headers,
             'body'    => $message,
-        ));
+        ]);
 
-        $transport = new Guzzle(array(), $http);
+        $transport = new Guzzle([], $http);
         $transport->send($url, $message, $headers);
     }
 }

@@ -21,16 +21,14 @@ class ProviderTest extends Base
                ->with('rcrowe/raven', realpath(__DIR__.'/../../../').'/src/Provider/Laravel/config');
         $app['config'] = $config;
 
-        $provider = new RavenServiceProvider($app);
-        $provider->register();
+        (new RavenServiceProvider($app))->register();
     }
 
     public function testTransportBound()
     {
         $app = $this->getApplication();
 
-        $provider = new RavenServiceProvider($app);
-        $provider->register();
+        (new RavenServiceProvider($app))->register();
 
         $this->assertTrue($app->bound('log.raven.transport'));
         $this->assertInstanceOf('rcrowe\Raven\Transport\Guzzle', $app->make('log.raven.transport'));
@@ -40,8 +38,7 @@ class ProviderTest extends Base
     {
         $app = $this->getApplication();
 
-        $provider = new RavenServiceProvider($app);
-        $provider->register();
+        (new RavenServiceProvider($app))->register();
 
         $this->assertTrue($app->bound('log.raven.handler'));
         $this->assertInstanceOf('rcrowe\Raven\Handler\Laravel', $app->make('log.raven.handler'));
@@ -51,8 +48,7 @@ class ProviderTest extends Base
     {
         $app = $this->getApplication();
 
-        $provider = new RavenServiceProvider($app);
-        $provider->register();
+        (new RavenServiceProvider($app))->register();
 
         $client = $app->make('log.raven');
 
@@ -119,9 +115,9 @@ class ProviderTest extends Base
     public function testStringProcessorRegistered()
     {
         $app = $this->getApplication(true);
-        $app['log.raven.processors'] = array(
+        $app['log.raven.processors'] = [
             'Monolog\Processor\GitProcessor'
-        );
+        ];
 
         $provider = new RavenServiceProvider($app);
         $provider->register();
@@ -134,11 +130,11 @@ class ProviderTest extends Base
     public function testClosureProcessorRegistered()
     {
         $app = $this->getApplication(true);
-        $app['log.raven.processors'] = array(
+        $app['log.raven.processors'] = [
             function ($result) {
                 var_dump($result);
             }
-        );
+        ];
 
         $provider = new RavenServiceProvider($app);
         $provider->register();
@@ -153,9 +149,9 @@ class ProviderTest extends Base
     public function testInvalidProcessor()
     {
         $app = $this->getApplication(true);
-        $app['log.raven.processors'] = array(
+        $app['log.raven.processors'] = [
             123
-        );
+        ];
 
         $provider = new RavenServiceProvider($app);
         $provider->register();

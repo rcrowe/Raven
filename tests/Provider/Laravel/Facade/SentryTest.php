@@ -22,16 +22,16 @@ class SentryTest extends Base
     public function testSetRemoveUser()
     {
         $app  = $this->bootApplication();
-        $user = array(
+        $user = [
             'id'   => 1,
             'name' => 'Rob Crowe',
-        );
+        ];
 
         Sentry::setUser($user);
         $this->assertEquals($app['log.raven']->context->user, $user);
 
         Sentry::removeUser();
-        $this->assertEquals($app['log.raven']->context->user, array());
+        $this->assertEquals($app['log.raven']->context->user, []);
     }
 
     protected function bootApplication($enabled = true)

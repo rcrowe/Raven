@@ -48,27 +48,26 @@ class LaravelTest extends PHPUnit_Framework_TestCase
     public function testQueueNotSet()
     {
         $handler = new Laravel;
-        $handler->process('', '', array());
+        $handler->process('', '', []);
     }
 
     public function testProcess()
     {
         $url     = 'https://123:456@app.getsentry.com/789';
         $data    = 'hello world';
-        $headers = array('foo' => 'bar');
+        $headers = ['foo' => 'bar'];
 
         $queue = m::mock('Illuminate\Queue\QueueManager');
-        $queue->shouldReceive('push')->once()->with('rcrowe\Raven\Handler\Laravel\Job', array(
+        $queue->shouldReceive('push')->once()->with('rcrowe\Raven\Handler\Laravel\Job', [
             'url'       => $url,
             'data'      => $data,
             'headers'   => $headers,
-            'transport' => array(
+            'transport' => [
                 'class'   => 'rcrowe\Raven\Transport\Guzzle',
-                'options' => array(),
-            ),
-        ));
+                'options' => [],
+            ],
+        ]);
 
-        $handler = new Laravel(null, $queue);
-        $handler->process($url, $data, $headers);
+        (new Laravel(null, $queue))->process($url, $data, $headers);
     }
 }

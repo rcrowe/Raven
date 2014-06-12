@@ -6,7 +6,7 @@ use rcrowe\Raven\Handler\BaseHandler;
 
 class TempHandler extends BaseHandler
 {
-    public function process($url, $data, array $headers = array())
+    public function process($url, $data, array $headers = [])
     {
         return true;
     }
