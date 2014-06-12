@@ -60,6 +60,8 @@ class Guzzle extends BaseTransport
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function send($url, $message, array $headers = array())
     {
