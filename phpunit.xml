@@ -19,20 +19,14 @@
         <whitelist>
             <directory suffix=".php">./src/</directory>
         </whitelist>
-<!--         <blacklist>
-            <directory suffix=".php">PEAR_INSTALL_DIR</directory>
-            <directory suffix=".php">PHP_LIBDIR</directory>
-            <directory suffix=".php">vendor</directory>
-            <directory suffix=".php">tests</directory>
-        </blacklist> -->
     </filter>
     <logging>
-<!--         <log type="coverage-html"
+        <log type="coverage-html"
              target="build/coverage"
              title="Raven"
              charset="UTF-8"
              yui="true"
-             highlight="true" /> -->
+             highlight="true" />
 
         <log type="coverage-text"
              target="php://stdout"
