@@ -59,11 +59,12 @@ class RavenServiceProvider extends ServiceProvider
     public function boot()
     {
         $app = $this->app;
-        $app['log'] = new Log($app['log']->getMonolog());
 
         if (!$app->config->get('raven::enabled')) {
             return;
         }
+
+        $app['log'] = new Log($app['log']->getMonolog());
 
         $app['log']->registerHandler(
             $app->config->get('raven::level', 'error'),
