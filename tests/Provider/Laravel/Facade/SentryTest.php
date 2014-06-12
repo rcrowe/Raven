@@ -4,15 +4,14 @@ namespace rcrowe\Raven\Tests\Provider\Laravel\Facade;
 
 use PHPUnit_Framework_TestCase;
 use Mockery as m;
-
 use Illuminate\Foundation\Application;
 use Illuminate\Config\Repository;
 use Illuminate\Queue\QueueManager;
 use rcrowe\Raven\Provider\Laravel\Log;
 use Monolog\Logger;
 use rcrowe\Raven\Provider\Laravel\RavenServiceProvider;
-
 use rcrowe\Raven\Provider\Laravel\Facade\Sentry;
+use rcrowe\Raven\Client;
 
 class SentryTest extends PHPUnit_Framework_TestCase
 {
@@ -26,6 +25,9 @@ class SentryTest extends PHPUnit_Framework_TestCase
         $this->bootApplication();
 
         $this->assertInstanceOf('rcrowe\Raven\Client', Sentry::getFacadeRoot());
+
+        $data = Sentry::get_default_data();
+        $this->assertEquals($data['logger'], 'rcrowe-raven/'.Client::VERSION);
     }
 
     public function testSetRemoveUser()
