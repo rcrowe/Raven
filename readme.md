@@ -34,7 +34,7 @@ Add `rcrowe\raven` as a requirement to composer.json:
 ```javascript
 {
     "require": {
-        "rcrowe/raven": "dev-master"
+        "rcrowe/raven": "~0.2.0"
     }
 }
 ```
