@@ -41,6 +41,8 @@ Add `rcrowe\raven` as a requirement to composer.json:
 
 Update your packages with `composer update` or install with `composer install`.
 
+Then follow the instructions for your [provider](https://github.com/rcrowe/Raven#providers) (if you are using one).
+
 ## Usage
 
 This library exposes the same API for recording your messages as the official raven-php client. It should just be a case of
@@ -132,3 +134,67 @@ Providers offer painless integration to other libraries / frameworks.
 ### Laravel
 
 #### Installation
+
+Add the service provider to `app/config/app.php`:
+
+```php
+'rcrowe\Raven\Provider\Laravel\RavenServiceProvider',
+```
+
+Optionally register the facade to your aliases:
+
+```php
+'Sentry' => 'rcrowe\Raven\Provider\Laravel\Facade\Raven.php',
+```
+
+#### Configuration
+
+Raven needs to know your client DSN. First publish the Raven config file with the following command:
+
+```
+php artisan config:publish rcrowe/raven
+```
+
+Then edit `app/config/packages/rcrowe/raven/config.php`
+
+You can also set your Raven DSN from `app/config/services.php`:
+
+```php
+'raven' => [
+	'dsn' => '...'
+],
+```
+
+**Note:** Raven makes use of the Laravel queue, so make sure your `app/config/queue.php` is set correctly.
+
+#### Usage
+
+Now where ever you want to record a message just use the normal Log facade.
+
+```php
+try {
+    throw new Exception('This is an example');
+} catch (Exception $ex) {
+    Log::error($ex);
+}
+```
+
+To capture and send all messages you can add the following:
+
+```php
+App::error(function(Exception $exception, $code)
+{
+    Log::error($exception);
+});
+```
+
+Using the alias you can set the user information for all messages with:
+
+```php
+Sentry::setUser([
+	'id'   => 1,
+	'name' => 'Rob Crowe',
+]);
+```
+
+**Note:** Check out the config file for more!
