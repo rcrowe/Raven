@@ -17,12 +17,12 @@ class ProviderTest extends Base
 
         $config = m::mock('Illuminate\Config\Repository');
         $config->shouldReceive('package')
-                ->once()
-                ->with(
-                    'rcrowe/raven',
-                    realpath(__DIR__.'/../../../src/config'),
-                    'raven'
-                );
+               ->once()
+               ->with(
+                   'rcrowe/raven',
+                   realpath(__DIR__.'/../../../src/config'),
+                   'raven'
+               );
         $app['config'] = $config;
 
         (new RavenServiceProvider($app))->register();
