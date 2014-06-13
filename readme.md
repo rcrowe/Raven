@@ -26,7 +26,7 @@ Raven offers flexibility in how those messages are captured, processed & sent. B
         - [Udp](https://github.com/rcrowe/Raven#udp)
 - [Providers](https://github.com/rcrowe/Raven#providers)
     - [Laravel](https://github.com/rcrowe/Raven#laravel)
-    
+
 ## Installation
 
 Add `rcrowe\raven` as a requirement to composer.json:
@@ -188,13 +188,15 @@ App::error(function(Exception $exception, $code)
 });
 ```
 
-Using the alias you can set the user information for all messages with:
+Using the alias you can set / remove the user information for all messages:
 
 ```php
 Sentry::setUser([
 	'id'   => 1,
 	'name' => 'Rob Crowe',
 ]);
+
+Sentry::removeUser();
 ```
 
 **Note:** Check out the config file for more!
