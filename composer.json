@@ -2,7 +2,7 @@
     "name": "rcrowe/raven",
     "description": "Raven client for Sentry that supports background processing through multiple providers.",
     "homepage": "https://github.com/rcrowe/Raven",
-    "keywords": ["sentry", "raven", "async", "background", "worker"],
+    "keywords": ["sentry", "raven", "laravel", "async", "background", "worker"],
     "authors": [
         {
             "name": "Rob Crowe",
