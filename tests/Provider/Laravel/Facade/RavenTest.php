@@ -4,18 +4,18 @@ namespace rcrowe\Raven\Tests\Provider\Laravel\Facade;
 
 use rcrowe\Raven\Tests\Provider\Laravel\Base;
 use rcrowe\Raven\Provider\Laravel\RavenServiceProvider;
-use rcrowe\Raven\Provider\Laravel\Facade\Sentry;
+use rcrowe\Raven\Provider\Laravel\Facade\Raven;
 use rcrowe\Raven\Client;
 
-class SentryTest extends Base
+class RavenTest extends Base
 {
     public function testFacadeInstance()
     {
         $this->bootApplication();
 
-        $this->assertInstanceOf('rcrowe\Raven\Client', Sentry::getFacadeRoot());
+        $this->assertInstanceOf('rcrowe\Raven\Client', Raven::getFacadeRoot());
 
-        $data = Sentry::get_default_data();
+        $data = Raven::get_default_data();
         $this->assertEquals($data['logger'], 'rcrowe-raven/'.Client::VERSION);
     }
 
@@ -27,10 +27,10 @@ class SentryTest extends Base
             'name' => 'Rob Crowe',
         ];
 
-        Sentry::setUser($user);
+        Raven::setUser($user);
         $this->assertEquals($app['log.raven']->context->user, $user);
 
-        Sentry::removeUser();
+        Raven::removeUser();
         $this->assertEquals($app['log.raven']->context->user, []);
     }
 
@@ -42,7 +42,7 @@ class SentryTest extends Base
         $provider->register();
         $provider->boot();
 
-        Sentry::setFacadeApplication($app);
+        Raven::setFacadeApplication($app);
 
         return $app;
     }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * Static interface to the Raven client.
  */
-class Sentry extends Facade
+class Raven extends Facade
 {
     /**
      * Get the registered name of the component.
