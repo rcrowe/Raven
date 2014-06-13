@@ -30,7 +30,11 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->config->package('rcrowe/raven', null);
+        $this->app->config->package('rcrowe/raven', realpath(__DIR__.'/../../config'), 'raven');
+
+        $this->app->bindIf('log.raven.dsn', function () {
+            return ($this->app->config->get('services.raven.dsn')) ?: $this->app->config->get('raven::dsn');
+        });
 
         $this->app->bindIf('log.raven.transport', function () {
             return new Transport;
@@ -48,7 +52,7 @@ class RavenServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('log.raven', function () {
-            $client = new Client($this->app->config->get('raven::dsn'));
+            $client = new Client($this->app['log.raven.dsn']);
             $client->tags_context([
                 'laravel_environment' => $this->app->environment(),
                 'laravel_version'     => Application::VERSION,

@@ -30,7 +30,7 @@ class Base extends PHPUnit_Framework_TestCase
             ->andReturnUsing(function ($env, $package, $group, $items) {
                 return $items;
             });
-        $config->getLoader()->shouldReceive('exists')->with('environments', 'raven')->andReturn(false);
+        $config->getLoader()->shouldReceive('exists')->with('config', 'raven')->andReturn(true);
         $config->getLoader()->shouldReceive('exists')->with('dsn', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('enabled', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('level', 'raven')->andReturn(false);
@@ -45,6 +45,9 @@ class Base extends PHPUnit_Framework_TestCase
                 ],
             ]
         );
+
+        $config->getLoader()->shouldReceive('load')->with('production', 'services', '');
+
         $app['config'] = $config;
 
         $logger = new Log(new Logger('test'));
