@@ -144,7 +144,7 @@ Add the service provider to `app/config/app.php`:
 Optionally register the facade to your aliases:
 
 ```php
-'Sentry' => 'rcrowe\Raven\Provider\Laravel\Facade\Raven.php',
+'Sentry' => 'rcrowe\Raven\Provider\Laravel\Facade\Raven',
 ```
 
 #### Configuration
