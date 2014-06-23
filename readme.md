@@ -187,6 +187,7 @@ App::error(function(Exception $exception, $code)
     Log::error($exception);
 });
 ```
+**Note:** Be aware that Laravel does this out of the box in `app/start/global.php`
 
 Using the alias you can set / remove the user information for all messages:
 
