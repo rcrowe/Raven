@@ -16,6 +16,7 @@ use Closure;
 use rcrowe\Raven\Handler\HandlerInterface;
 use rcrowe\Raven\Handler\Sync;
 use RuntimeException;
+use Raven_Serializer;
 
 class Client extends Raven_Client
 {
@@ -96,6 +97,50 @@ class Client extends Raven_Client
     public function setEncoder(Closure $callback)
     {
         $this->encoder = $callback;
+    }
+    
+    public function sanitize(&$data)
+    {
+        $app    = app();
+        $config = $app->make('config');
+        $files  = $app->make('files');
+
+        // manually trigger autoloading, as it's not done in some edge cases due to PHP bugs (see #60149)
+        if ( ! class_exists('Raven_Serializer'))
+        {
+            spl_autoload_call('Raven_Serializer');
+        }
+        
+        // get keys variables environment file
+        $configEnv = $config->getEnvironment();
+        if ($configEnv == 'production')
+        {
+            $envFile = '.env.php';
+        }
+        else
+        {
+            $envFile = '.env.' . $configEnv . '.php';
+        }
+
+        $envFileComplete = base_path() . '/' . $envFile; 
+        if ($files->exists($envFileComplete))
+        {
+            $envKeys = array_keys($files->getRequire($envFileComplete));
+
+            // remove variables environment file in data send to sentry
+            if (isset($data['sentry.interfaces.Http']['env']) && is_array($data['sentry.interfaces.Http']['env']))
+            {
+                foreach ($data['sentry.interfaces.Http']['env'] as $key => $value)
+                {
+                    if (in_array($key, $envKeys))
+                    {
+                        unset($data['sentry.interfaces.Http']['env'][$key]);
+                    }
+                }
+            }
+        }
+
+        $data = Raven_Serializer::serialize($data);
     }
 
     /**
