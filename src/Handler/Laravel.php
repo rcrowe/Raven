@@ -25,16 +25,22 @@ class Laravel extends BaseHandler
     protected $queue;
 
     /**
+     * @var String
+     */
+    protected $customQueue;
+
+    /**
      * New instance.
      *
      * @param \rcrowe\Raven\Transport\TransportInterface $transport
      * @param \Illuminate\Queue\QueueManager             $queue
      */
-    public function __construct(TransportInterface $transport = null, QueueManager $queue = null)
+    public function __construct(TransportInterface $transport = null, QueueManager $queue = null, $customQueue = null)
     {
         parent::__construct($transport);
 
         $this->queue = $queue;
+        $this->customQueue = $customQueue;
     }
 
     /**
@@ -77,6 +83,6 @@ class Laravel extends BaseHandler
             'transport' => $this->transport->toArray(),
         ];
 
-        $this->queue->push('rcrowe\Raven\Handler\Laravel\Job', $data);
+        $this->queue->push('rcrowe\Raven\Handler\Laravel\Job', $data, $this->customQueue);
     }
 }
