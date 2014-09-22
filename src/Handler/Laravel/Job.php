@@ -59,7 +59,11 @@ class Job
             $this->transport = new $data['transport']['class']($data['transport']['options']);
         }
 
-        $this->transport->send($data['url'], $data['data'], $data['headers']);
-        $job->delete();
+        try {
+            $this->transport->send($data['url'], $data['data'], $data['headers']);
+            $job->delete();
+        } catch (\Exception $e) {
+            $job->release(30);
+        }
     }
 }

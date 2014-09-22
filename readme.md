@@ -165,7 +165,17 @@ You can also set your Raven DSN from `app/config/services.php`:
 ],
 ```
 
-**Note:** Raven makes use of the Laravel queue, so make sure your `app/config/queue.php` is set correctly.
+**Note:** Raven makes use of the Laravel queue, you can also customise the queue connection and the actual queue it self.
+
+```php
+'raven' => [
+    ...
+    'queue' => [
+        'connection' => '...', // matches app/config/queue.php -> connections->connection
+        'queue' => '...' // matches app/config/queue.php -> connections->connection->queue
+    ]
+]
+```
 
 #### Usage
 

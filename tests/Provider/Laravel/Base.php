@@ -19,7 +19,7 @@ class Base extends PHPUnit_Framework_TestCase
 
     protected function getApplication($enabled = false)
     {
-        $app          = new Application;
+        $app          = new Application();
         $app['env']   = 'production';
         $app['queue'] = new QueueManager($app);
 
@@ -34,12 +34,17 @@ class Base extends PHPUnit_Framework_TestCase
         $config->getLoader()->shouldReceive('exists')->with('dsn', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('enabled', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('level', 'raven')->andReturn(false);
+        $config->getLoader()->shouldReceive('exists')->with('queue', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->with('monolog', 'raven')->andReturn(false);
         $config->getLoader()->shouldReceive('load')->with('production', 'config', 'raven')->andReturn(
             [
                 'dsn'     => 'http://123:456@foo.com/789',
                 'enabled' => $enabled,
                 'level'   => 'critical',
+                'queue'   => [
+                    'connection' => '',
+                    'queue' => ''
+                ],
                 'monolog' => [
                     'processors' => [],
                 ],

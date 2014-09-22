@@ -37,13 +37,20 @@ class RavenServiceProvider extends ServiceProvider
         });
 
         $this->app->bindIf('log.raven.transport', function () {
-            return new Transport;
+            return new Transport();
         });
 
         $this->app->bindIf('log.raven.handler', function () {
+            $queue = $this->app->queue;
+            $connection = $this->app->config->get('raven::queue.connection');
+            if ($connection) {
+                $queue->connection($connection);
+            }
+
             return new Handler(
                 $this->app['log.raven.transport'],
-                $this->app->queue
+                $queue,
+                $this->app->config->get('raven::queue.queue', null)
             );
         });
 
@@ -86,7 +93,7 @@ class RavenServiceProvider extends ServiceProvider
                     foreach ($processors as $process) {
                         // Get callable
                         if (is_string($process)) {
-                            $callable = new $process;
+                            $callable = new $process();
                         } elseif (is_callable($process)) {
                             $callable = $process;
                         } else {
