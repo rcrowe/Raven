@@ -30,10 +30,10 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->config->package('rcrowe/raven', realpath(__DIR__.'/../../config'), 'raven');
+        $this->publishes([realpath(__DIR__.'/../../config/config.php') => config_path('raven.php')]);
 
         $this->app->bindIf('log.raven.dsn', function () {
-            return ($this->app->config->get('services.raven.dsn')) ?: $this->app->config->get('raven::dsn');
+            return ($this->app->config->get('services.raven.dsn')) ?: $this->app->config->get('raven.dsn');
         });
 
         $this->app->bindIf('log.raven.transport', function () {
@@ -48,7 +48,7 @@ class RavenServiceProvider extends ServiceProvider
         });
 
         $this->app->bindIf('log.raven.processors', function () {
-            return $this->app->config->get('raven::monolog.processors', []);
+            return $this->app->config->get('raven.monolog.processors', []);
         });
 
         $this->app->singleton('log.raven', function () {
@@ -68,14 +68,14 @@ class RavenServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (!$this->app->config->get('raven::enabled')) {
+        if (!$this->app->config->get('raven.enabled')) {
             return;
         }
 
         $this->app->log = new Log($this->app->log->getMonolog());
 
         $this->app->log->registerHandler(
-            $this->app->config->get('raven::level', 'error'),
+            $this->app->config->get('raven.level', 'error'),
             function ($level) {
                 $handler = new RavenHandler($this->app['log.raven'], $level);
 
